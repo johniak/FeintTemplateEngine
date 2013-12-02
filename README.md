@@ -10,3 +10,5 @@ example parsed template
 		body
 		if test==true||(test2==false&&false)
 			div(class="op")
+		each index, it in tab
+			div(class="op2")
