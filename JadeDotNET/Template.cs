@@ -12,7 +12,6 @@ namespace JadeDotNET
     class Template
     {
         Dictionary<string, object> parameters = new Dictionary<string, object>();
-        List<String> tagStack = new List<string>();
         List<String> restircedStartString = new List<string>();
         string code;
         int level = -1;
@@ -44,68 +43,28 @@ namespace JadeDotNET
         {
             string rendered = "";
             rendered = parseBlock(code);
-            for (int i = tagStack.Count - 1; i >= 0; i--)
-            {
-                var tag = tagStack[i];
-                String line = "\n" + createLevel(level--);
-                line += "</" + tag + ">";
-                rendered += line;
-            }
+            
             rendered = rendered.Trim();
-            tagStack.Clear();
+            
             return rendered;
         }
 
         private string parseBlock(string codeBlock)
         {
+
+            List<String> tagStack = new List<string>();
             string rendered = "";
-            TextReader reader = new StringReader(codeBlock);
+            TemplateReader reader = new TemplateReader(codeBlock);
             int level;
             string line;
             StringBuilder stringBuilder = new StringBuilder();
             Match m;
             String paramsRegex = "(\\((?<attr>[a-zA-Z0-9_\\-]+([ ]?=[ ]?(\".*?\")))*[ ]*(,[ ]*(?<attr>[a-zA-Z0-9_\\-]+([ ]?=[ ]?(\".*?\")))*[ ]*)*\\))";
-            string ifStatment = "";
-            bool isInIf = false;
-            Boolean wasElse = false;
-            string ifBlock = "";
-            string elseBlock = "";
-
-            while (reader.Peek() >= 0)
+            while (reader.CanRead)
             {
                 line = reader.ReadLine();
-                level = getLevel(line);
-                if (isInIf)
-                {
-                    if (level >= this.level)
-                    {
-
-                        if (level == this.level && line.Trim() == "else")
-                        {
-                            wasElse = true;
-                            continue;
-                        }
-                        if (!wasElse)
-                        {
-                            ifBlock += line + "\n";
-                        }
-                        else
-                        {
-                            elseBlock += line + "\n";
-                        }
-                        if (reader.Peek() < 0)
-                        {
-                            stringBuilder.Append(ifParser(ifBlock, elseBlock, ifStatment));
-                            isInIf = false;
-                        }
-                        continue;
-                    }
-                    else
-                    {
-                        stringBuilder.Append(ifParser(ifBlock, elseBlock, ifStatment));
-                        isInIf = false;
-                    }
-                }
+                level = reader.Level;
+                
                 stringBuilder.Append("\n");
                 stringBuilder.Append(createLevel(level));
                 if (level < this.level)
@@ -116,18 +75,23 @@ namespace JadeDotNET
                     this.level = level;
                 }
                 line = line.Trim();
-                m = Regex.Match(line, "^if[ ]*(.*)");
+                m = Regex.Match(line, "^if[ ]+(.*)");
                 if (m.Success)
                 {
-                    ifStatment = m.Groups[1].Value;
-                    isInIf = true;
-                    elseBlock = "";
-                    ifBlock = "";
-                    this.level = level;
                     stringBuilder.Remove(stringBuilder.Length - level-1, level+1);
+                   stringBuilder.Append(ifParser(reader,m.Groups[1].Value));
                     continue;
                 }
 
+                m = Regex.Match(line, "^each[ ]+(.*)");
+                if (m.Success)
+                {
+                    stringBuilder.Remove(stringBuilder.Length - level - 1, level + 1);
+                    stringBuilder.Append(eachParser(reader, m.Groups[1].Value));
+                    continue;
+                }
+
+                
 
                 m = Regex.Match(line, "^(?<tag>[a-zA-Z]+[0-6]?)" + paramsRegex + "?$");
                 if (m.Success)
@@ -192,24 +156,81 @@ namespace JadeDotNET
                 }
             }
             rendered = stringBuilder.ToString();
+            for (int i = tagStack.Count - 1; i >= 0; i--)
+            {
+                var tag = tagStack[i];
+                line = "\n" + createLevel(this.level--);
+                line += "</" + tag + ">";
+                rendered += line;
+            }
             return rendered;
         }
 
-        string ifParser(string ifStatment, string elseStatment, string condition)
+        string ifParser(TemplateReader reader, string condition)
         {
             String rpnCondition = toRPNLogic(condition);
             List<String> conditionList = new List<string>(rpnCondition.Split(' '));
             bool result = rpnConditionChecker(conditionList);
+            int level= reader.Level;
+            String ifBlock = reader.ReadBlock();
+            String elseBlock = null;
+            if (reader.CanRead)
+            {
+                String lineAfter = reader.ReadLine();
+                if (level == reader.Level && lineAfter.Trim() == "else")
+                {
+                    elseBlock = reader.ReadBlock();
+                }
+                else
+                {
+                    reader.MoveToLine(reader.ActualLineIndex - 1);
+                }
+            }
             if (result)
             {
-                return parseBlock(ifStatment);
+                return parseBlock(ifBlock);
             }
-            else if (elseStatment.Length > 0)
+            else if (elseBlock!=null)
             {
-                return parseBlock(ifStatment);
+                return parseBlock(elseBlock);
             }
 
             return "";
+        }
+
+        string eachParser(TemplateReader reader, string condition)
+        {
+            string variable =@"([a-zA-Z_][a-zA-Z0-9_-]*)([\.]([a-zA-Z_][a-zA-Z0-9_\-]*))*";
+            string regex = "((?<index>"+variable+")[ ]*,[ ]*)?[ ]*(?<iterator>"+variable+")[ ]+in[ ]+(?<collection>"+variable+")";
+            Match m = Regex.Match(condition, regex);
+            StringBuilder builder = new StringBuilder();
+            if (m.Success)
+            {
+                var indexName = m.Groups["index"].Value;
+                var iteratorName = m.Groups["iterator"].Value;
+                var collectionName = m.Groups["collection"].Value;
+                int index = 0;
+                dynamic collection = getVariable(collectionName);
+                string codeBlock = reader.ReadBlock();
+                if (codeBlock.Length == 0)
+                {
+                    return "";
+                }
+                parameters.Add(indexName, 0);
+                foreach (var it in collection)
+                {
+                    parameters.Add(iteratorName, it);
+                    parameters[indexName] = index++;
+                    builder.Append(parseBlock(codeBlock));
+                    parameters.Remove(iteratorName);
+                }
+                parameters.Remove(indexName);
+            }
+            else
+            {
+                throw new Exception("Can't parse each condition!");
+            }
+            return builder.ToString();
         }
 
         bool rpnConditionChecker(List<String> condition)
@@ -565,22 +586,7 @@ namespace JadeDotNET
             return actualVariable;
         }
 
-        /// <summary>
-        /// Gets nested level
-        /// </summary>
-        /// <param name="line"></param>
-        /// <returns></returns>
-        int getLevel(string line)
-        {
-            for (int i = 0; i < line.Length; i++)
-            {
-                if (line[i] != '\t')
-                {
-                    return i;
-                }
-            }
-            return 0;
-        }
+
 
 
 

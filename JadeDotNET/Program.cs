@@ -13,7 +13,8 @@ namespace JadeDotNET
         {
             TextReader reader = File.OpenText("template.jade");
             String text = reader.ReadToEnd();
-            Template template = new Template(text, new { test =true,test2=false });
+            int[] tab = {4,5,6,7,8,9};
+            Template template = new Template(text, new { test =true,test2=false,tab=tab });
             Console.WriteLine(template.Parse());
             Console.ReadLine();
         }
