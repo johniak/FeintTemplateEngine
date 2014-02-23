@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DynamicExpresso;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -91,9 +92,9 @@ namespace JadeDotNET
                     continue;
                 }
 
-                
 
-                m = Regex.Match(line, "^(?<tag>[a-zA-Z]+[0-6]?)" + paramsRegex + "?$");
+
+                m = Regex.Match(line, "^(?<tag>[a-zA-Z]+[0-6]?)" + paramsRegex + "?(?<text>.*)$");
                 if (m.Success)
                 {
                     if (level == this.level)
@@ -122,6 +123,15 @@ namespace JadeDotNET
                         stringBuilder.Append(cap.Value.Trim() + " ");
                     }
                     stringBuilder.Append(">");
+                    if (m.Groups["text"].Success)
+                    {
+                        var expression = m.Groups["text"].Value;
+                        if (expression.Trim().StartsWith("="))
+                        {
+                            expression = parseExpression(expression);
+                        }
+                        stringBuilder.Append(expression);
+                    }
                 }
                 m = Regex.Match(line, "^(?<tag>[a-zA-Z]+[0-6]?) (?<text>.*)$");
                 if (m.Success)
@@ -587,7 +597,17 @@ namespace JadeDotNET
         }
 
 
-
+        string parseExpression(String line)
+        {
+            var parameters = new Parameter[this.parameters.Count];
+            int i =0;
+            foreach(var p in this.parameters)
+            { 
+                parameters[i++]= new Parameter(p.Key,p.Value);
+            }
+            var interpreter = new Interpreter();
+            return interpreter.Eval(line.Trim().Substring(1), parameters).ToString();
+        }
 
 
         /// <summary>
@@ -604,5 +624,6 @@ namespace JadeDotNET
             }
             return str;
         }
+        
     }
 }
