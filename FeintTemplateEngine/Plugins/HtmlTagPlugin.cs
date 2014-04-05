@@ -18,7 +18,7 @@ namespace FeintTemplateEngine.Plugins
             string tagNamePattern = "(?<tag>[a-zA-Z][a-zA-Z0-9_]*)";
             string attributes = "(\\((?<attr>[a-zA-Z0-9_\\-]+([ ]?=[ ]?(\".*?\")))*[ ]*(,[ ]*(?<attr>[a-zA-Z0-9_\\-]+([ ]?=[ ]?(\".*?\")))*[ ]*)*\\))";
             string idPattern = "(#(?<id>[a-zA-Z_][a-zA-Z_\\-09]*))?";
-            string classPattern = "(.(?<class>[a-zA-Z_][a-zA-Z_\\-09]*))?";
+            string classPattern = "(\\.(?<class>[a-zA-Z_][a-zA-Z_\\-09]*))?";
             base.RegularExpressionPatterns.Add("^" + tagNamePattern + idPattern + classPattern + "( (?<text>[^\\(]*.*)|$)$");
             base.RegularExpressionPatterns.Add("^" + tagNamePattern + classPattern + idPattern + "( (?<text>[^\\(]*.*)|$)$");
             base.RegularExpressionPatterns.Add("^" + tagNamePattern + idPattern + classPattern + attributes + "( ?(?<text>[^\\(]*.*)|$)$");
