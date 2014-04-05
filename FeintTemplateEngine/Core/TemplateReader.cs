@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JadeDotNET
+namespace FeintTemplateEngine.Core
 {
-    class TemplateReader
+    public class TemplateReader
     {
         string code;
         public int ActualLineIndex { get; private set; }
@@ -18,8 +18,9 @@ namespace JadeDotNET
 
         public TemplateReader(string code)
         {
-            if (code[code.Length - 1] == '\n')
-                this.code = code.Substring(0,code.Length - 1);
+            code=code.Replace("\r","");
+            if (code.Length>0&&code[code.Length - 1] == '\n')
+                this.code = code.Substring(0, code.Length - 1);
             else
                 this.code = code;
             this.lines = this.code.Split('\n');
@@ -36,7 +37,7 @@ namespace JadeDotNET
         {
             StringBuilder builder = new StringBuilder();
             int blockLevel = Level;
-            while(CanRead)
+            while (CanRead)
             {
                 var line = ReadLine();
                 if (Level <= blockLevel)
@@ -47,7 +48,28 @@ namespace JadeDotNET
                 builder.Append(line);
                 builder.Append("\n");
             }
-            builder.Remove(builder.Length - 1, 1);
+            if (builder.Length >= 1)
+                builder.Remove(builder.Length - 1, 1);
+            return builder.ToString();
+        }
+        public string ReadBlockWithIndent(int indent)
+        {
+            StringBuilder builder = new StringBuilder();
+            int blockLevel = Level;
+            while (CanRead)
+            {
+                var line = ReadLine();
+                if (Level <= blockLevel)
+                {
+                    ActualLineIndex--;
+                    return builder.ToString();
+                }
+                builder.Append(TemplateRendererUtils.CreateIndent(indent));
+                builder.Append(line.TrimStart());
+                builder.Append("\n");
+            }
+            if (builder.Length >= 1)
+                builder.Remove(builder.Length - 1, 1);
             return builder.ToString();
         }
 

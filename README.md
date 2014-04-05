@@ -1,14 +1,22 @@
-JadeDotNET
+Feint Template engine
 ==========
 
-Jade template languege parser implemented in C#
+Template engine based on JADE.
+
+
 
 example parsed template
 
-	html(lang="pl")
-		head
-		body
-		if test==true||(test2==false&&false)
-			div(class="op")
-		each index, it in tab
-			div(class="op2")
+	html test
+		test#foo.bar
+			test2#d.a(abc="a")
+				textBlock.
+					aaaa
+					asdsdad
+					asdasda
+					asdasdasdasdasd
+					asdasda
+				if true
+					testBlock
+						each val, index in collection
+							|abcd {{val}}::{{index}}
