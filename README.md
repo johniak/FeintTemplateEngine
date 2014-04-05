@@ -1,4 +1,4 @@
-JadeDotNET
+Feint Template Engine
 ==========
 
-Jade template languege parser implemented in C#
+Template engine based on JADE.
