@@ -1,4 +1,4 @@
-Feint Template engine
+Feint Template Engine
 ==========
 
 Template engine based on JADE.
