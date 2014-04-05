@@ -1,61 +1,95 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Feint Template Engine by johniak</title>
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="shortcut icon" href="assets/ico/favicon.ico">
+
+  <title>Feint Template Engine</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="css/jumbotron-narrow.css" rel="stylesheet">
+
+  <!-- Just for debugging purposes. Don't actually copy this line! -->
+  <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1>Feint Template Engine</h1>
-        <p>JADE template C# .net feint framework</p>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <![endif]-->
+    </head>
 
-        <p class="view"><a href="https://github.com/johniak/FeintTemplateEngine">View the Project on GitHub <small>johniak/FeintTemplateEngine</small></a></p>
+    <body>
+
+      <div class="container">
+        <div class="header">
+          <ul class="nav nav-pills pull-right">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#">Reference</a></li>
+          </ul>
+          <h3 class="text-muted">Feint Template Engine</h3>
+        </div>
+
+        <div class="jumbotron">
+          <h1>Feint Template Engine</h1>
+          <p class="lead">Template engine based on JADE.</p>
+          Change this:
+          <pre style="text-align:left!important;"><code style="text-align:left!important; float:left;" class="html">html test
+  test#foo.bar
+    test2#d.a(abc="a")
+      textBlock.
+        aaaa
+        asdsdad
+        asdasda
+        asdasdasdasdasd
+        asdasda
+      if true
+        testBlock
+          each val, index in collection
+            |abcd {{val}}={{index}}
+          </code></pre>
+          To:
+          <pre style="text-align:left!important;"><code style="text-align:left!important; float:left;" class="html">&lt;html&gt;
+        test
+        &lt;test id="foo" class="bar"&gt;
+                &lt;test2 id="d" class="a" abc="a"&gt;
+                        &lt;textBlock&gt;
+                                aaaa
+                                asdsdad
+                                asdasda
+                                asdasdasdasdasd
+                                asdasda
+                        &lt;/textBlock&gt;
+                        &lt;testBlock&gt;
+                                abcd adam=0
+                                abcd michal=1
+                                abcd agniszka=2
+                        &lt;/testBlock&gt;
+                &lt;/test2&gt;
+        &lt;/test&gt;
+&lt;/html&gt;
+          </code></pre>
+          <p><a class="btn btn-lg btn-success" href="https://github.com/johniak/FeintTemplateEngine" role="button">View on Github</a></p>
+        </div>
 
 
-        <ul>
-          <li><a href="https://github.com/johniak/FeintTemplateEngine/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/johniak/FeintTemplateEngine/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/johniak/FeintTemplateEngine">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>
-<a name="feint-template-engine" class="anchor" href="#feint-template-engine"><span class="octicon octicon-link"></span></a>Feint Template Engine</h1>
+        <div class="footer">
+          <p>&copy; Johniak 2014</p>
+        </div>
 
-<p>Template engine based on JADE.</p>
+      </div> <!-- /container -->
 
-<p>example parsed template</p>
 
-<pre><code>html test
-    test#foo.bar
-        test2#d.a(abc="a")
-            textBlock.
-                aaaa
-                asdsdad
-                asdasda
-                asdasdasdasdasd
-                asdasda
-            if true
-                testBlock
-                    each val, index in collection
-                        |abcd {{val}}::{{index}}
-</code></pre>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/johniak">johniak</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
   </body>
-</html>
+  </html>
