@@ -188,7 +188,9 @@ namespace FeintTemplateEngine.Plugins
             }
             renderer.LineIndent++;
             String sourceBlock = reader.ReadBlockWithIndent(renderer.LineIndent);
+            sourceBlock = sourceBlock.TrimEnd('\n');
             renderedBuilder.Append(sourceBlock);
+            renderedBuilder.Append("\n");
             renderer.LineIndent--;
             renderedBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent));
             renderedBuilder.Append("</");

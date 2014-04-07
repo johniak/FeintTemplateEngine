@@ -10,8 +10,10 @@ namespace FeintTemplateEngine.Core
     {
         string code;
         public int ActualLineIndex { get; private set; }
+        
         string[] lines;
         public int Level { get { return getLevel(lines[ActualLineIndex]); } }
+        
         int readedLength;
         public bool CanRead { get { return ActualLineIndex + 1 < lines.Length; } }
 
@@ -31,6 +33,17 @@ namespace FeintTemplateEngine.Core
         {
             readedLength = lines[++ActualLineIndex].Length + 1;
             return lines[ActualLineIndex];
+        }
+
+        public string ReadToEnd()
+        {
+            StringBuilder builder = new StringBuilder();
+            while (CanRead)
+            {
+                builder.Append(ReadLine());
+                builder.Append("\n");
+            }
+            return builder.ToString();
         }
 
         public string ReadBlock()
