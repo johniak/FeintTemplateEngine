@@ -1,7 +1,14 @@
 Feint Template Engine
 ==========
 
-Template engine based on JADE.
+<h5>Template engine based on JADE.</h5>
+
+
+Table of Contents
+--
+* <h5>[Language example](#language-example)</h5>
+* <h5>[Inheritance](#inheritance)</h5>
+* <h5>[Example usage](#example-usage)</h5>
 
 
 Language example:
@@ -10,7 +17,7 @@ Language example:
 Example template:
 
     html 
-		head
+    	head
 			script(src="example_script.js")
 		body
 			#container
