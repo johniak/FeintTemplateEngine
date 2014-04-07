@@ -6,9 +6,9 @@ Feint Template Engine
 
 Table of Contents
 --
-* <h5>[Language example](#language-example)</h5>
-* <h5>[Inheritance](#inheritance)</h5>
-* <h5>[Example usage](#example-usage)</h5>
+* [Language example](#language-example)
+* [Inheritance](#inheritance)
+* [Example usage](#example-usage)
 
 
 Language example:
