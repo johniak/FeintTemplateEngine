@@ -22,7 +22,7 @@ Example template:
 
 Rendered output :
 
-*with parrameter friends={"Piotr","Asia","Paweł","Mateusz"}*
+*with parrameter friends={"Piotr","Asia","Paweł","Mateusz","Rafał"}*
 
 	<html>
 	        <head>
@@ -48,6 +48,9 @@ Rendered output :
 	                                <li>
 	                                        Mateusz
 	                                </li>
+	                                <li>
+                                        	Rafal
+                                	</li>
 	                        </ul>
 	                </div>
 	        </body>
@@ -85,7 +88,7 @@ Child:
 
 Rendered output :
 
-*with parrameter friends={"Piotr","Asia","Paweł","Mateusz"}*
+*with parrameter friends={"Piotr","Asia","Paweł","Mateusz","Rafał"}*
 
     <html>
         <head>
@@ -111,6 +114,9 @@ Rendered output :
                                 </li>
                                 <li>
                                         Mateusz
+                                </li>
+                                <li>
+                                        Rafal
                                 </li>
                         </ul>
                 </div>
