@@ -196,7 +196,6 @@ namespace FeintTemplateEngine.Plugins
             renderedBuilder.Append(">\n");
             return renderedBuilder.ToString();
         }
-
         private string renderShortcutDiv(string line, TemplateReader reader, Dictionary<string, object> parameters, int patternIndex)
         {
             Match lineMatch = Regex.Match(line.Trim(), RegularExpressionPatterns[patternIndex]);

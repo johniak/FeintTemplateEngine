@@ -20,17 +20,24 @@ namespace FeintTemplateEngine.Plugins
         {
             Match lineMatch = Regex.Match(line.Trim(), RegularExpressionPatterns[patternIndex]);
             String statment = lineMatch.Groups["statment"].Value;
-            return eachParser(statment, reader,parameters);
+            return eachParser(statment, reader, parameters);
         }
         private string eachParser(string statment, TemplateReader reader, Dictionary<string, object> parameters)
         {
             string variable = @"([a-zA-Z_][a-zA-Z0-9_]*)([\.]([a-zA-Z_][a-zA-Z0-9_]*))*";
-            string regex = "((?<iterator>" + variable + ")[ ]*,[ ]*)?[ ]*(?<index>" + variable + ")[ ]+in[ ]+(?<collection>" + variable + ")";
+            string indexPattern = "(,[ ]*(?<index>" + variable + "))";
+            string iteratorPattern = "(?<iterator>" + variable + ")";
+            string collectionPattern="(?<collection>" + variable + ")";
+            string optional = "?";
+            string regex = iteratorPattern + "[ ]*" + indexPattern + optional + "[ ]+in[ ]+" + collectionPattern;
             Match m = Regex.Match(statment, regex);
             StringBuilder builder = new StringBuilder();
             if (m.Success)
             {
-                var indexName = m.Groups["index"].Value;
+                String indexName = null;
+                bool isWithIndex = m.Groups["index"].Success;
+                if (isWithIndex)
+                    indexName = m.Groups["index"].Value;
                 var iteratorName = m.Groups["iterator"].Value;
                 var collectionName = m.Groups["collection"].Value;
                 string codeBlock = reader.ReadBlock();
@@ -40,15 +47,19 @@ namespace FeintTemplateEngine.Plugins
                 }
                 int index = 0;
                 dynamic collection = parameters[collectionName];
-                parameters.Add(indexName, 0);
+                if (isWithIndex)
+                    parameters.Add(indexName, 0);
                 foreach (var it in collection)
                 {
                     parameters.Add(iteratorName, it);
-                    parameters[indexName] = index++;
+                    if (isWithIndex)
+                        parameters[indexName] = index;
+                    index++;
                     builder.Append(renderer.RenderBlock(codeBlock));
                     parameters.Remove(iteratorName);
                 }
-                parameters.Remove(indexName);
+                if (isWithIndex)
+                    parameters.Remove(indexName);
             }
             else
             {
