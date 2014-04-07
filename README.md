@@ -4,10 +4,12 @@ Feint Template Engine
 Template engine based on JADE.
 
 
+Language example:
+--
 
 Example template:
 
-	html 
+    html 
 		head
 			script(src="example_script.js")
 		body
@@ -19,7 +21,8 @@ Example template:
 						li {{friend}}
 
 Rendered output :
-with parrameter friends={"Piotr","Asia","Paweł","Mateusz"}
+
+*with parrameter friends={"Piotr","Asia","Paweł","Mateusz"}*
 
 	<html>
 	        <head>
@@ -49,11 +52,14 @@ with parrameter friends={"Piotr","Asia","Paweł","Mateusz"}
 	                </div>
 	        </body>
 	</html>
-
+Inheritance
+--
 Template engine supports inheritance:
-(files must have fte extension)
+
+*files must have fte extension*
 
 Parrent:
+
 	html
 		head
 			block head
@@ -63,6 +69,7 @@ Parrent:
 					|Container parent
 
 Child:
+
 	extends parrent_template
 
 	block head
@@ -77,39 +84,43 @@ Child:
 				li {{friend}}
 
 Rendered output :
-with parrameter friends={"Piotr","Asia","Paweł","Mateusz"}
-	<html>
-	        <head>
-	                <script src="example_script.js">
-	                </script>
-	        </head>
-	        <body>
-	                <div id="container">
-	                		Container parent
-	                        <h2>
-	                                Best template engine ever
-	                        </h2>
-	                        Friends:
-	                        <ul>
-	                                <li>
-	                                        Piotr
-	                                </li>
-	                                <li>
-	                                        Asia
-	                                </li>
-	                                <li>
-	                                        Pawel
-	                                </li>
-	                                <li>
-	                                        Mateusz
-	                                </li>
-	                        </ul>
-	                </div>
-	        </body>
-	</html>	
+
+*with parrameter friends={"Piotr","Asia","Paweł","Mateusz"}*
+
+    <html>
+        <head>
+            <script src="example_script.js">
+            </script>
+        </head>
+        <body>
+                <div id="container">
+                    	Container parent
+                        <h2>
+                                Best template engine ever
+                        </h2>
+                        Friends:
+                        <ul>
+                                <li>
+                                        Piotr
+                                </li>
+                                <li>
+                                        Asia
+                                </li>
+                                <li>
+                                        Pawel
+                                </li>
+                                <li>
+                                        Mateusz
+                                </li>
+                        </ul>
+                </div>
+        </body>
+    </html>	
 
 
 Example usage:
+--
+
 	TextReader reader = File.OpenText("child_template.fte");
 	String text = reader.ReadToEnd();
 	reader.Close();
