@@ -12,9 +12,15 @@ namespace FeintTemplateEngine.Core
     public class TemplateRenderer
     {
         protected List<TemplatePlugin> plugins = new List<TemplatePlugin>();
+        
+        protected Dictionary<Type,TemplatePlugin> pluginsDictionary= new Dictionary<Type,TemplatePlugin>();
         public Dictionary<string, object> parameters { get; protected set; }
-        string sourceCode;
+        
+
+        private string sourceCode;
         public int LineIndent { get; set;}
+        
+
         public TemplateRenderer(String sourceCode, Dictionary<string, object> parameters)
         {
             initialze();
@@ -24,10 +30,12 @@ namespace FeintTemplateEngine.Core
 
         protected void initialze()
         {
-            plugins.Add(new HtmlTagPlugin(this));
-            plugins.Add(new TextPlugin(this));
-            plugins.Add(new ConditionalStatmentPlugin(this));
-            plugins.Add(new ForeachPlugin(this));
+            addPlugin(new HtmlTagPlugin(this));
+            addPlugin(new TextPlugin(this));
+            addPlugin(new ConditionalStatmentPlugin(this));
+            addPlugin(new ForeachPlugin(this));
+            addPlugin(new ExtendsPlugin(this));
+            addPlugin(new BlockPlugin(this));
             plugins.Sort(templatePluginComparator);
         }
 
@@ -58,7 +66,6 @@ namespace FeintTemplateEngine.Core
             }
             return renderedStringBuilder.ToString();
         }
-
         private string variablePreRenderer(String line)
         {
             String pattern="^(.*(?<repl>{{(?<expression>.*)}}).*)+$";
@@ -83,14 +90,10 @@ namespace FeintTemplateEngine.Core
             }
             return line;
         }
-
-       
-
         public String RenderAllBraceExpressions(String line, Dictionary<String, Object> parameters)
         {
             return line;
         }
-
         private int templatePluginComparator(TemplatePlugin t1,TemplatePlugin t2)
         {
             if (t1.Priority == t2.Priority)
@@ -99,5 +102,16 @@ namespace FeintTemplateEngine.Core
                 return 1;
             return -1;
         }
+        protected void addPlugin(TemplatePlugin plugin)
+        {
+            pluginsDictionary.Add(plugin.GetType(), plugin);
+            plugins.Add(plugin);
+        }
+        public T GetPlugin<T>()where T:TemplatePlugin
+        {
+            return (T)pluginsDictionary[typeof(T)];
+        }
+        
+
     }
 }

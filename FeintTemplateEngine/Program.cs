@@ -14,10 +14,12 @@ namespace FeintTemplateEngine
         /// </summary>
         static void Main()
         {
-            TextReader reader = File.OpenText("template.jade");
+            //TextReader reader = File.OpenText("child_template.fte");
+            TextReader reader = File.OpenText("child_template.fte");
             String text = reader.ReadToEnd();
-            String[] texts={"adam","michał","agniszka"};
-            TemplateEngine templateEngine = new TemplateEngine(text, new  {collection=texts });
+            reader.Close();
+            String[] friends={"Piotr","Asia","Paweł","Mateusz"};
+            TemplateEngine templateEngine = new TemplateEngine(text, new { friends = friends });
             var rendered = templateEngine.Render();
             rendered = rendered.Replace('\r', '\n');
             Console.WriteLine(rendered);
