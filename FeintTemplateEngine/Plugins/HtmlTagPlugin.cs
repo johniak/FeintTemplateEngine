@@ -25,10 +25,12 @@ namespace FeintTemplateEngine.Plugins
             base.RegularExpressionPatterns.Add("^" + tagNamePattern + classPattern + optional + idPattern + optional + textPattern + "$");
             base.RegularExpressionPatterns.Add("^" + tagNamePattern + idPattern + optional + classPattern + optional + attributes + textPattern + "$");
             base.RegularExpressionPatterns.Add("^" + tagNamePattern + classPattern + optional + idPattern + optional + attributes + textPattern + "$");
-            base.RegularExpressionPatterns.Add("^" + tagNamePattern + classPattern + optional + idPattern + optional + attributes + "?\\.[w]*$");
-            base.RegularExpressionPatterns.Add("^" + tagNamePattern + idPattern + optional + classPattern + optional + attributes + "?\\.[w]*$");
+            base.RegularExpressionPatterns.Add("^" + tagNamePattern + classPattern + optional + idPattern + optional + attributes +optional+"\\.[w]*$");
+            base.RegularExpressionPatterns.Add("^" + tagNamePattern + idPattern + optional + classPattern + optional + attributes + optional+"\\.[w]*$");
             base.RegularExpressionPatterns.Add("^" + idPattern + classPattern + optional + attributes + optional + textPattern + optional + "$");
             base.RegularExpressionPatterns.Add("^" + classPattern + idPattern + optional + attributes + optional + textPattern + optional + "$");
+            base.RegularExpressionPatterns.Add("^" + idPattern + classPattern + optional + attributes + optional + textPattern + optional + "\\.[w]*$");
+            base.RegularExpressionPatterns.Add("^" + classPattern + idPattern + optional + attributes + optional + textPattern + optional + "\\.[w]*$");
 
 
         }
@@ -53,6 +55,10 @@ namespace FeintTemplateEngine.Plugins
                     return renderShortcutDiv(line, reader, parameters, patternIndex);
                 case 7:
                     return renderShortcutDiv(line, reader, parameters, patternIndex);
+                case 8:
+                    return renderShortcutDivWithTextBlock(line, reader, parameters, patternIndex);
+                case 9:
+                    return renderShortcutDivWithTextBlock(line, reader, parameters, patternIndex);
             }
             throw new TemplateException("Can't parse html tag.");
         }
@@ -61,92 +67,63 @@ namespace FeintTemplateEngine.Plugins
             Match lineMatch = Regex.Match(line.Trim(), RegularExpressionPatterns[patternIndex]);
             String tag = lineMatch.Groups["tag"].Value;
             String text = "";
+            List<string> attributes = new List<string>();
             int level = reader.Level;
             if (lineMatch.Groups["text"].Success)
             {
-                text = lineMatch.Groups["text"].Value;
+                text = lineMatch.Groups["text"].Value + "\n";
             }
-            StringBuilder renderedBuilder = new StringBuilder();
-            renderedBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent));
-            renderedBuilder.Append("<");
-            renderedBuilder.Append(tag);
+            StringBuilder textBuilder = new StringBuilder();
+            if (text.Length > 0)
+                textBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent+1));
+            textBuilder.Append(text);
+            String sourceBlock = reader.ReadBlock();
+            renderer.LineIndent++;
+            textBuilder.Append(renderer.RenderBlock(sourceBlock));
+            renderer.LineIndent--;
+
             if (lineMatch.Groups["id"].Success)
             {
-                renderedBuilder.Append(" id=\"");
-                renderedBuilder.Append(lineMatch.Groups["id"].Value);
-                renderedBuilder.Append("\"");
+                attributes.Add("id=\"" + lineMatch.Groups["id"].Value + "\"");
             }
             if (lineMatch.Groups["class"].Success)
             {
-                renderedBuilder.Append(" class=\"");
-                renderedBuilder.Append(lineMatch.Groups["class"].Value);
-                renderedBuilder.Append("\"");
+                attributes.Add("class=\"" + lineMatch.Groups["class"].Value + "\"");
             }
-            renderedBuilder.Append(">\n");
-            if (text.Length > 0)
-            {
-                renderedBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent + 1));
-                renderedBuilder.Append(text);
-                renderedBuilder.Append("\n");
-            }
-            String sourceBlock = reader.ReadBlock();
-            renderer.LineIndent++;
-            renderedBuilder.Append(renderer.RenderBlock(sourceBlock));
-            renderer.LineIndent--;
-            renderedBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent));
-            renderedBuilder.Append("</");
-            renderedBuilder.Append(tag);
-            renderedBuilder.Append(">\n");
-            return renderedBuilder.ToString();
+            return generateTag(tag, attributes, textBuilder.ToString());
         }
         private string renderTagWithAttributes(string line, TemplateReader reader, Dictionary<string, object> parameters, int patternIndex)
         {
             Match lineMatch = Regex.Match(line.Trim(), RegularExpressionPatterns[patternIndex]);
             String tag = lineMatch.Groups["tag"].Value;
             String text = "";
+            List<string> attributes = new List<string>();
             int level = reader.Level;
             if (lineMatch.Groups["text"].Success)
             {
                 text = lineMatch.Groups["text"].Value;
             }
-            StringBuilder renderedBuilder = new StringBuilder();
-            renderedBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent));
-            renderedBuilder.Append("<");
-            renderedBuilder.Append(tag);
+            StringBuilder textBuilder = new StringBuilder();
+            if (text.Length > 0)
+                textBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent + 1));
+            textBuilder.Append(text);
+            String sourceBlock = reader.ReadBlock();
+            renderer.LineIndent++;
+            textBuilder.Append(renderer.RenderBlock(sourceBlock));
+            renderer.LineIndent--;
             if (lineMatch.Groups["id"].Success)
             {
-                renderedBuilder.Append(" id=\"");
-                renderedBuilder.Append(lineMatch.Groups["id"].Value);
-                renderedBuilder.Append("\"");
+                attributes.Add("id=\"" + lineMatch.Groups["id"].Value + "\"");
             }
             if (lineMatch.Groups["class"].Success)
             {
-                renderedBuilder.Append(" class=\"");
-                renderedBuilder.Append(lineMatch.Groups["class"].Value);
-                renderedBuilder.Append("\"");
+                attributes.Add("class=\"" + lineMatch.Groups["class"].Value + "\"");
             }
             foreach (Capture cap in lineMatch.Groups["attr"].Captures)
             {
-                renderedBuilder.Append(" ");
-                renderedBuilder.Append(cap.Value.Trim());
+                attributes.Add(cap.Value.Trim());
             }
-            renderedBuilder.Append(">\n");
-            if (text.Length > 0)
-            {
-                renderedBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent + 1));
-                renderedBuilder.Append(text);
-                renderedBuilder.Append("\n");
-            }
-
-            String sourceBlock = reader.ReadBlock();
-            renderer.LineIndent++;
-            renderedBuilder.Append(renderer.RenderBlock(sourceBlock));
-            renderer.LineIndent--;
-            renderedBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent));
-            renderedBuilder.Append("</");
-            renderedBuilder.Append(tag);
-            renderedBuilder.Append(">\n");
-            return renderedBuilder.ToString();
+            return generateTag(tag, attributes, textBuilder.ToString());
         }
         private string renderTagWithAttributesWithTextBlock(string line, TemplateReader reader, Dictionary<string, object> parameters, int patternIndex)
         {
@@ -154,98 +131,134 @@ namespace FeintTemplateEngine.Plugins
             String tag = lineMatch.Groups["tag"].Value;
             String text = "";
             int level = reader.Level;
+            List<string> attributes = new List<string>();
             if (lineMatch.Groups["text"].Success)
             {
                 text = lineMatch.Groups["text"].Value;
             }
-            StringBuilder renderedBuilder = new StringBuilder();
-            renderedBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent));
-            renderedBuilder.Append("<");
-            renderedBuilder.Append(tag);
-            if (lineMatch.Groups["id"].Success)
-            {
-                renderedBuilder.Append(" id=\"");
-                renderedBuilder.Append(lineMatch.Groups["id"].Value);
-                renderedBuilder.Append("\"");
-            }
-            if (lineMatch.Groups["class"].Success)
-            {
-                renderedBuilder.Append(" class=\"");
-                renderedBuilder.Append(lineMatch.Groups["class"].Value);
-                renderedBuilder.Append("\"");
-            }
-            foreach (Capture cap in lineMatch.Groups["attr"].Captures)
-            {
-                renderedBuilder.Append(" ");
-                renderedBuilder.Append(cap.Value.Trim());
-            }
-            renderedBuilder.Append(">\n");
+            StringBuilder textBuilder = new StringBuilder();
             if (text.Length > 0)
-            {
-                renderedBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent + 1));
-                renderedBuilder.Append(text);
-                renderedBuilder.Append("\n");
-            }
+                textBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent + 1));
+            textBuilder.Append(text);
             renderer.LineIndent++;
             String sourceBlock = reader.ReadBlockWithIndent(renderer.LineIndent);
             sourceBlock = sourceBlock.TrimEnd('\n');
-            renderedBuilder.Append(sourceBlock);
-            renderedBuilder.Append("\n");
+            textBuilder.Append(sourceBlock);
+            textBuilder.Append("\n");
             renderer.LineIndent--;
-            renderedBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent));
-            renderedBuilder.Append("</");
-            renderedBuilder.Append(tag);
-            renderedBuilder.Append(">\n");
-            return renderedBuilder.ToString();
+            if (lineMatch.Groups["id"].Success)
+            {
+                attributes.Add("id=\"" + lineMatch.Groups["id"].Value + "\"");
+            }
+            if (lineMatch.Groups["class"].Success)
+            {
+                attributes.Add("class=\"" + lineMatch.Groups["class"].Value + "\"");
+            }
+            foreach (Capture cap in lineMatch.Groups["attr"].Captures)
+            {
+                attributes.Add(cap.Value.Trim());
+            }
+            return generateTag(tag, attributes, textBuilder.ToString());
         }
         private string renderShortcutDiv(string line, TemplateReader reader, Dictionary<string, object> parameters, int patternIndex)
         {
             Match lineMatch = Regex.Match(line.Trim(), RegularExpressionPatterns[patternIndex]);
             String tag = "div";
             String text = "";
+            List<string> attributes = new List<string>();
             int level = reader.Level;
             if (lineMatch.Groups["text"].Success)
             {
                 text = lineMatch.Groups["text"].Value;
             }
-            StringBuilder renderedBuilder = new StringBuilder();
-            renderedBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent));
-            renderedBuilder.Append("<");
-            renderedBuilder.Append(tag);
+            StringBuilder textBuilder = new StringBuilder();
+            if (text.Length > 0)
+                textBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent + 1));
+            textBuilder.Append(text);
+            String sourceBlock = reader.ReadBlock();
+            renderer.LineIndent++;
+            textBuilder.Append(renderer.RenderBlock(sourceBlock));
+            renderer.LineIndent--;
             if (lineMatch.Groups["id"].Success)
             {
-                renderedBuilder.Append(" id=\"");
-                renderedBuilder.Append(lineMatch.Groups["id"].Value);
-                renderedBuilder.Append("\"");
+                attributes.Add("id=\"" + lineMatch.Groups["id"].Value + "\"");
             }
             if (lineMatch.Groups["class"].Success)
             {
-                renderedBuilder.Append(" class=\"");
-                renderedBuilder.Append(lineMatch.Groups["class"].Value);
-                renderedBuilder.Append("\"");
+                attributes.Add("class=\"" + lineMatch.Groups["class"].Value + "\"");
             }
             foreach (Capture cap in lineMatch.Groups["attr"].Captures)
             {
-                renderedBuilder.Append(" ");
-                renderedBuilder.Append(cap.Value.Trim());
+                attributes.Add(cap.Value.Trim());
             }
-            renderedBuilder.Append(">\n");
-            if (text.Length > 0)
-            {
-                renderedBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent + 1));
-                renderedBuilder.Append(text);
-                renderedBuilder.Append("\n");
-            }
-
-            String sourceBlock = reader.ReadBlock();
-            renderer.LineIndent++;
-            renderedBuilder.Append(renderer.RenderBlock(sourceBlock));
-            renderer.LineIndent--;
-            renderedBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent));
-            renderedBuilder.Append("</");
-            renderedBuilder.Append(tag);
-            renderedBuilder.Append(">\n");
-            return renderedBuilder.ToString();
+            return generateTag(tag, attributes, textBuilder.ToString());
         }
+        private string renderShortcutDivWithTextBlock(string line, TemplateReader reader, Dictionary<string, object> parameters, int patternIndex)
+        {
+            Match lineMatch = Regex.Match(line.Trim(), RegularExpressionPatterns[patternIndex]);
+            String tag = "div";
+            String text = "";
+            List<string> attributes = new List<string>();
+            int level = reader.Level;
+            if (lineMatch.Groups["text"].Success)
+            {
+                text = lineMatch.Groups["text"].Value;
+            }
+            StringBuilder textBuilder = new StringBuilder();
+            if (text.Length > 0)
+                textBuilder.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent + 1));
+            textBuilder.Append(text);
+            renderer.LineIndent++;
+            String sourceBlock = reader.ReadBlockWithIndent(renderer.LineIndent);
+            sourceBlock = sourceBlock.TrimEnd('\n');
+            textBuilder.Append(sourceBlock);
+            textBuilder.Append("\n");
+            renderer.LineIndent--;
+            if (lineMatch.Groups["id"].Success)
+            {
+                attributes.Add("id=\"" + lineMatch.Groups["id"].Value + "\"");
+            }
+            if (lineMatch.Groups["class"].Success)
+            {
+                attributes.Add("class=\"" + lineMatch.Groups["class"].Value + "\"");
+            }
+            foreach (Capture cap in lineMatch.Groups["attr"].Captures)
+            {
+                attributes.Add(cap.Value.Trim());
+            }
+            return generateTag(tag, attributes, textBuilder.ToString());
+        }
+
+
+        private string generateTag(String tag, List<String> attributes, String inside)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent));
+            sb.Append("<");
+            sb.Append(tag);
+            if (attributes != null)
+            {
+                foreach (var a in attributes)
+                {
+                    sb.Append(" ");
+                    sb.Append(a);
+                }
+            }
+            if (inside != null && inside.Length != 0)
+            {
+                sb.Append(">\n");
+                sb.Append(inside);
+                sb.Append(TemplateRendererUtils.CreateIndent(renderer.LineIndent));
+                sb.Append("</");
+                sb.Append(tag);
+                sb.Append(">\n");
+            }
+            else
+            {
+                sb.Append("/>\n");
+            }
+            return sb.ToString();
+        }
+
     }
 }
