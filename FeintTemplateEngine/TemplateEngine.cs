@@ -33,7 +33,9 @@ namespace FeintTemplateEngine
 
         public String Render()
         {
-            return renderer.RenderBlock(sourceCode);
+            var rendered = renderer.RenderBlock(sourceCode);
+            rendered = rendered.Replace('\r', '\n');
+            return rendered;
         }
 
         Dictionary<string, object> getVariablesFromObject(object obj)

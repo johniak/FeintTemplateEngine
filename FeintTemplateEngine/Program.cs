@@ -21,7 +21,6 @@ namespace FeintTemplateEngine
             String[] friends={"Piotr","Asia","Paweł","Mateusz","Rafał"};
             TemplateEngine templateEngine = new TemplateEngine(text, new { friends = friends });
             var rendered = templateEngine.Render();
-            rendered = rendered.Replace('\r', '\n');
             Console.WriteLine(rendered);
             Console.Read();
         }

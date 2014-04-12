@@ -54,6 +54,7 @@
     <Compile Include="Core\TemplateRenderer.cs" />
     <Compile Include="Plugins\BlockPlugin.cs" />
     <Compile Include="Plugins\ConditionalStatmentPlugin.cs" />
+    <Compile Include="Plugins\DoctypePlugin.cs" />
     <Compile Include="Plugins\ExtendsPlugin.cs" />
     <Compile Include="Plugins\ForeachPlugin.cs" />
     <Compile Include="Plugins\HtmlTagPlugin.cs" />
