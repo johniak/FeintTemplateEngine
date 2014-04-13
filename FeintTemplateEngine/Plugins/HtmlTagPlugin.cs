@@ -11,6 +11,7 @@ namespace FeintTemplateEngine.Plugins
     class HtmlTagPlugin : TemplatePlugin
     {
         List<String> nonEmptyTag = new List<string>();
+        List<String> textBlockTags = new List<string>();
         public HtmlTagPlugin(TemplateRenderer renderer)
             : base(renderer)
         {
@@ -35,6 +36,8 @@ namespace FeintTemplateEngine.Plugins
             nonEmptyTag.Add("style");
             nonEmptyTag.Add("title");
             nonEmptyTag.Add("textarea");
+            textBlockTags.Add("script");
+            textBlockTags.Add("style");
 
         }
 
@@ -65,7 +68,7 @@ namespace FeintTemplateEngine.Plugins
             }
             throw new TemplateException("Can't parse html tag.");
         }
-        private string render(String line, TemplateReader reader, String pattern, Dictionary<string, object> parameters, bool renderWithBlock = false)
+        private string render(String line, TemplateReader reader, String pattern, Dictionary<string, object> parameters, bool renderWithTextBlock = false)
         {
             Match lineMatch = Regex.Match(line.Trim(), pattern);
             String tag = "div";
@@ -89,12 +92,15 @@ namespace FeintTemplateEngine.Plugins
             }
             renderer.LineIndent++;
             String sourceBlock;
-            if (renderWithBlock)
+            if (renderWithTextBlock||textBlockTags.Contains(tag))
             {
                 sourceBlock = reader.ReadBlockWithIndent(renderer.LineIndent);
                 sourceBlock = sourceBlock.TrimEnd('\n');
-                textBuilder.Append(sourceBlock);
-                textBuilder.Append("\n");
+                if (sourceBlock.Length > 0)
+                {
+                    textBuilder.Append(sourceBlock);
+                    textBuilder.Append("\n");
+                }
             }
             else
             {
