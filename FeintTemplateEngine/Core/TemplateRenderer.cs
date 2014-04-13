@@ -37,6 +37,7 @@ namespace FeintTemplateEngine.Core
             addPlugin(new ExtendsPlugin(this));
             addPlugin(new BlockPlugin(this));
             addPlugin(new DoctypePlugin(this));
+            addPlugin(new MixinPlugin(this));
             plugins.Sort(templatePluginComparator);
         }
 

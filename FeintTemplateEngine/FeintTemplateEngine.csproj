@@ -58,6 +58,7 @@
     <Compile Include="Plugins\ExtendsPlugin.cs" />
     <Compile Include="Plugins\ForeachPlugin.cs" />
     <Compile Include="Plugins\HtmlTagPlugin.cs" />
+    <Compile Include="Plugins\MixinPlugin.cs" />
     <Compile Include="Plugins\TextPlugin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
