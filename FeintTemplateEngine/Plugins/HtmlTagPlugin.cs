@@ -18,8 +18,8 @@ namespace FeintTemplateEngine.Plugins
             Priority = TemplatePriority.Low;
             string tagNamePattern = "(?<tag>[a-zA-Z][a-zA-Z0-9_]*)";
             string attributes = "(\\((?<attr>[a-zA-Z0-9_\\-]+([ ]?=[ ]?(\".*?\")))*[ ]*(,[ ]*(?<attr>[a-zA-Z0-9_\\-]+([ ]?=[ ]?(\".*?\")))*[ ]*)*\\))";
-            string idPattern = "(#(?<id>[a-zA-Z_][a-zA-Z_\\-09]*))";
-            string classPattern = "(\\.(?<class>[a-zA-Z_][a-zA-Z_\\-09]*))";
+            string idPattern = "(#(?<id>[a-zA-Z_][a-zA-Z_0-9]*))";
+            string classPattern = "(\\.(?<class>[a-zA-Z_][a-zA-Z_0-9]*))";
             string textPattern = "( (?<text>[^\\(]*.*)|$)";
             string optional = "?";
             base.RegularExpressionPatterns.Add("^" + tagNamePattern + idPattern + optional + classPattern + optional + textPattern + "$");

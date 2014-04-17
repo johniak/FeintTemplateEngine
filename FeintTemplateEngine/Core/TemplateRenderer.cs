@@ -49,13 +49,14 @@ namespace FeintTemplateEngine.Core
             {
                 String line = reader.ReadLine();
                 line = variablePreRenderer(line);
+                String lineTrimed = line.Trim();
                 for (int j = 0; j < plugins.Count;j++ )
                 {
                     var plugin = plugins[j];
                     for (int i = 0; i < plugin.RegularExpressionPatterns.Count; i++)
                     {
                         string pattern = plugin.RegularExpressionPatterns[i];
-                        if (Regex.IsMatch(line.Trim(), pattern))
+                        if (Regex.IsMatch(lineTrimed, pattern))
                         {
                             String renderedCode = plugin.RenderTag(line, reader, parameters,i);
                             renderedStringBuilder.Append(renderedCode);

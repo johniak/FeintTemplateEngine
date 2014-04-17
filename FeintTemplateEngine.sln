@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeintTemplateEngine", "FeintTemplateEngine\FeintTemplateEngine.csproj", "{FEC629D3-7D3A-466E-8411-AB0F77FB8DD5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateEngineUnitTest", "TemplateEngineUnitTest\TemplateEngineUnitTest.csproj", "{AC422BC4-D4DA-48F5-8DDC-37F8FFC0EBDA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{FEC629D3-7D3A-466E-8411-AB0F77FB8DD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEC629D3-7D3A-466E-8411-AB0F77FB8DD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEC629D3-7D3A-466E-8411-AB0F77FB8DD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC422BC4-D4DA-48F5-8DDC-37F8FFC0EBDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC422BC4-D4DA-48F5-8DDC-37F8FFC0EBDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC422BC4-D4DA-48F5-8DDC-37F8FFC0EBDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC422BC4-D4DA-48F5-8DDC-37F8FFC0EBDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
