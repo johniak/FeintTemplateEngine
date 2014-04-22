@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{FEC629D3-7D3A-466E-8411-AB0F77FB8DD5}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FeintTemplateEngine</RootNamespace>
     <AssemblyName>FeintTemplateEngine</AssemblyName>
@@ -54,11 +54,12 @@
     <Compile Include="Core\TemplateRenderer.cs" />
     <Compile Include="Plugins\BlockPlugin.cs" />
     <Compile Include="Plugins\ConditionalStatmentPlugin.cs" />
+    <Compile Include="Plugins\DoctypePlugin.cs" />
     <Compile Include="Plugins\ExtendsPlugin.cs" />
     <Compile Include="Plugins\ForeachPlugin.cs" />
     <Compile Include="Plugins\HtmlTagPlugin.cs" />
+    <Compile Include="Plugins\MixinPlugin.cs" />
     <Compile Include="Plugins\TextPlugin.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TemplateEngine.cs" />
     <Compile Include="Core\TemplatePlugin.cs" />

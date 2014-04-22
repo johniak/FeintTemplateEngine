@@ -1,6 +1,7 @@
 ﻿using FeintTemplateEngine.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -33,7 +34,9 @@ namespace FeintTemplateEngine
 
         public String Render()
         {
-            return renderer.RenderBlock(sourceCode);
+            var rendered = renderer.RenderBlock(sourceCode);
+            rendered = rendered.Replace('\r', '\n');
+            return rendered;
         }
 
         Dictionary<string, object> getVariablesFromObject(object obj)
@@ -51,6 +54,20 @@ namespace FeintTemplateEngine
                 dict.Add(p.Name, p.GetValue(obj));
             }
             return dict;
+        }
+        public static TemplateEngine FromFile(String filename, Dictionary<string, object> parameters)
+        {
+            return new TemplateEngine(readFile(filename), parameters);
+        }
+
+        public static TemplateEngine FromFile(String filename, Object parameters)
+        {
+            return new TemplateEngine(readFile(filename), parameters);
+        }
+        private static string readFile(String filename)
+        {
+            var reader = new StreamReader(filename, Encoding.UTF8,true);
+            return reader.ReadToEnd();
         }
     }
 }

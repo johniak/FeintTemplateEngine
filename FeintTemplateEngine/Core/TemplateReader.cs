@@ -78,7 +78,7 @@ namespace FeintTemplateEngine.Core
                     return builder.ToString();
                 }
                 builder.Append(TemplateRendererUtils.CreateIndent(indent));
-                builder.Append(line.TrimStart());
+                builder.Append(line.Substring(blockLevel+1));
                 builder.Append("\n");
             }
             if (builder.Length >= 1)
