@@ -29,7 +29,7 @@ Example template:
 
 Rendered output :
 
-*with parrameter friends={"Piotr","Asia","Paweł","Mateusz","Rafał"}*
+*with parameter friends={"Piotr","Asia","Paweł","Mateusz","Rafał"}*
 
 	<html>
 	        <head>
@@ -95,7 +95,7 @@ Child:
 
 Rendered output :
 
-*with parrameter friends={"Piotr","Asia","Paweł","Mateusz","Rafał"}*
+*with parameter friends={"Piotr","Asia","Paweł","Mateusz","Rafał"}*
 
     <html>
         <head>
